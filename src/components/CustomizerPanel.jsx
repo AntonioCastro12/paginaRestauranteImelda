@@ -1,6 +1,11 @@
 import { useMemo } from "react";
 import { motion } from "framer-motion";
-import { extras, businessInfo } from "../data/menu";
+import {
+  extras,
+  businessInfo,
+  removableIngredients,
+  addOns,
+} from "../data/menu";
 import { formatCurrency } from "../utils/format";
 
 const TOSTADA_PRICE = 30;
@@ -16,9 +21,13 @@ function getProductMode(productId) {
 export function CustomizerPanel({
   selectedProduct,
   selectedExtras,
+  removedIngredients,
+  selectedAddOns,
   quantity,
   onQuantityChange,
   onToggleExtra,
+  onToggleRemovedIngredient,
+  onAddOnQuantityChange,
   onAddToCart,
 }) {
   const mode = getProductMode(selectedProduct.id);
@@ -26,7 +35,16 @@ export function CustomizerPanel({
   const isContainer = mode === "multi";
   const maxSelections = isTostada ? 1 : isContainer ? 4 : 0;
 
-  const total = useMemo(() => {
+  const addOnsTotal = useMemo(
+    () =>
+      addOns.reduce(
+        (sum, item) => sum + (selectedAddOns[item.id] ?? 0) * item.price,
+        0,
+      ),
+    [selectedAddOns],
+  );
+
+  const baseTotal = useMemo(() => {
     if (isTostada) {
       return selectedExtras.length === 1 ? TOSTADA_PRICE : 0;
     }
@@ -39,6 +57,8 @@ export function CustomizerPanel({
 
     return selectedProduct.price;
   }, [isContainer, isTostada, selectedExtras.length, selectedProduct.price]);
+
+  const total = baseTotal + addOnsTotal;
 
   const canAdd = isTostada
     ? selectedExtras.length === 1
@@ -73,17 +93,17 @@ export function CustomizerPanel({
       <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
         <p className="text-sm font-semibold text-white">
           {isTostada
-            ? "Elige 1 ingrediente para tu tostada"
+            ? "Elige el ingrediente de tu tostada"
             : isContainer
               ? "Selecciona 3 o 4 ingredientes para tu contenedor"
               : "Este platillo ya incluye su servicio completo"}
         </p>
         <p className="mt-1 text-sm text-orange-50/70">
           {isTostada
-            ? `Cada tostada preparada cuesta ${formatCurrency(TOSTADA_PRICE)}.`
+            ? `Cada tostada preparada cuesta ${formatCurrency(TOSTADA_PRICE)}. Elige una y agrega las que necesites al carrito.`
             : isContainer
-              ? `Solo los contenedores se combinan: 3 ingredientes ${formatCurrency(CONTAINER_THREE_PRICE)} · 4 ingredientes ${formatCurrency(CONTAINER_FOUR_PRICE)}.`
-              : "Las tostadas y la salsa van aparte, tal como en el menu."}
+              ? `Solo los contenedores se combinan: 3 ingredientes ${formatCurrency(CONTAINER_THREE_PRICE)} | 4 ingredientes ${formatCurrency(CONTAINER_FOUR_PRICE)}.`
+              : "Si quieren todo, solo agrega al carrito. Si no, puedes quitar ingredientes o sumar extras."}
         </p>
 
         {mode !== "fixed" ? (
@@ -104,7 +124,8 @@ export function CustomizerPanel({
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                       <input
-                        type="checkbox"
+                        type={isTostada ? "radio" : "checkbox"}
+                        name={isTostada ? "tostada-ingrediente" : extra.id}
                         className="h-5 w-5 rounded border-white/20 accent-orange-500"
                         checked={checked}
                         disabled={disabled}
@@ -133,6 +154,85 @@ export function CustomizerPanel({
       </div>
 
       <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+        <p className="text-sm font-semibold text-white">Quitar ingredientes</p>
+        <p className="mt-1 text-sm text-orange-50/65">
+          Si no quieren alguno, marcala aqui. Si quieren todo, solo agrega.
+        </p>
+        <div className="mt-4 grid gap-3">
+          {removableIngredients.map((ingredient) => {
+            const checked = removedIngredients.includes(ingredient.name);
+
+            return (
+              <label
+                key={ingredient.id}
+                className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-4 transition ${
+                  checked
+                    ? "border-amber-300 bg-amber-300/10"
+                    : "border-white/10 bg-white/5 hover:border-orange-300/60"
+                }`}
+              >
+                <input
+                  type="checkbox"
+                  className="h-5 w-5 rounded border-white/20 accent-orange-500"
+                  checked={checked}
+                  onChange={() => onToggleRemovedIngredient(ingredient.name)}
+                />
+                <span className="font-medium text-white">Sin {ingredient.name}</span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+        <p className="text-sm font-semibold text-white">Extras adicionales</p>
+        <p className="mt-1 text-sm text-orange-50/65">
+          Tostadas extra y salsa extra cuestan {formatCurrency(10)} cada una.
+        </p>
+        <div className="mt-4 grid gap-3">
+          {addOns.map((item) => (
+            <div
+              key={item.id}
+              className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-4"
+            >
+              <div>
+                <p className="font-medium text-white">{item.name}</p>
+                <p className="mt-1 text-sm text-amber-300">
+                  {formatCurrency(item.price)} c/u
+                </p>
+              </div>
+              <div className="flex items-center gap-3 rounded-2xl bg-stone-950/60 p-2">
+                <button
+                  type="button"
+                  onClick={() =>
+                    onAddOnQuantityChange(
+                      item.id,
+                      Math.max(0, (selectedAddOns[item.id] ?? 0) - 1),
+                    )
+                  }
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white"
+                >
+                  -
+                </button>
+                <span className="min-w-8 text-center text-base font-black text-white">
+                  {selectedAddOns[item.id] ?? 0}
+                </span>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onAddOnQuantityChange(item.id, (selectedAddOns[item.id] ?? 0) + 1)
+                  }
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white"
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
         <p className="text-sm font-semibold text-white">Seleccion actual</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {mode !== "fixed" && selectedExtras.length > 0 ? (
@@ -152,6 +252,20 @@ export function CustomizerPanel({
             </span>
           )}
         </div>
+        {removedIngredients.length > 0 && (
+          <p className="mt-3 text-sm text-orange-50/75">
+            Sin: {removedIngredients.join(", ")}
+          </p>
+        )}
+        {addOnsTotal > 0 && (
+          <p className="mt-2 text-sm text-orange-50/75">
+            Extras:{" "}
+            {addOns
+              .filter((item) => (selectedAddOns[item.id] ?? 0) > 0)
+              .map((item) => `${item.name} x${selectedAddOns[item.id]}`)
+              .join(", ")}
+          </p>
+        )}
       </div>
 
       <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
@@ -186,7 +300,7 @@ export function CustomizerPanel({
 
       {isTostada && (
         <div className="mt-5 rounded-[1.5rem] border border-dashed border-amber-300/30 bg-amber-300/10 p-4 text-sm text-orange-50/85">
-          Cada tostada cuesta {formatCurrency(TOSTADA_PRICE)}.
+          Elige tu tostada, ajusta la cantidad y agregala al carrito.
           <p className="mt-2 font-semibold text-amber-200">
             {businessInfo.shippingNote}
           </p>
@@ -217,6 +331,15 @@ export function CustomizerPanel({
           onAddToCart({
             product: selectedProduct,
             extras: selectedExtras,
+            removedIngredients,
+            addOns: addOns
+              .filter((item) => (selectedAddOns[item.id] ?? 0) > 0)
+              .map((item) => ({
+                id: item.id,
+                name: item.name,
+                price: item.price,
+                quantity: selectedAddOns[item.id],
+              })),
             total,
             quantity,
           })

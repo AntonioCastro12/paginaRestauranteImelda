@@ -18,6 +18,8 @@ function App() {
   const [showLoader, setShowLoader] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(menuItems[0]);
   const [selectedExtras, setSelectedExtras] = useState([]);
+  const [removedIngredients, setRemovedIngredients] = useState([]);
+  const [selectedAddOns, setSelectedAddOns] = useState({});
   const [quantity, setQuantity] = useState(1);
   const [feedback, setFeedback] = useState("");
 
@@ -40,6 +42,13 @@ function App() {
     }),
     [selectedExtras.length, selectedProduct.price],
   );
+
+  const resetSelections = () => {
+    setSelectedExtras([]);
+    setRemovedIngredients([]);
+    setSelectedAddOns({});
+    setQuantity(1);
+  };
 
   const toggleExtra = (extra) => {
     setSelectedExtras((current) => {
@@ -64,19 +73,30 @@ function App() {
     });
   };
 
+  const toggleRemovedIngredient = (ingredientName) => {
+    setRemovedIngredients((current) =>
+      current.includes(ingredientName)
+        ? current.filter((item) => item !== ingredientName)
+        : [...current, ingredientName],
+    );
+  };
+
+  const handleAddOnQuantityChange = (id, value) => {
+    setSelectedAddOns((current) => ({
+      ...current,
+      [id]: Math.max(0, value),
+    }));
+  };
+
   const handleSelectProduct = (product) => {
     setSelectedProduct(product);
-    setSelectedExtras([]);
-    setQuantity(1);
+    resetSelections();
   };
 
   const handleAddToCart = (config) => {
     addItem(config);
-    setSelectedExtras([]);
-    setQuantity(1);
-    setFeedback(
-      `${config.quantity} ${config.quantity === 1 ? "unidad agregada" : "unidades agregadas"} al carrito.`,
-    );
+    resetSelections();
+    setFeedback("Pedido agregado al carrito.");
   };
 
   return (
@@ -93,7 +113,7 @@ function App() {
               <SectionTitle
                 eyebrow="Menu interactivo"
                 title="Elige tu platillo o arma tu contenedor combinable"
-                description="La orden de pata entera y la media orden son platillos diferentes. Solo los contenedores se combinan: $70 con 3 ingredientes y $100 con 4. El envio se cobra aparte."
+                description="Las tostadas ahora se eligen rapido: eliges el ingrediente, ajustas cantidad y agregas al carrito. Todos los productos pueden marcar ingredientes que no quieren y sumar tostadas o salsa extra por $10."
               />
 
               <div className="mt-8 grid gap-6 lg:grid-cols-[1fr,380px]">
@@ -137,14 +157,14 @@ function App() {
                             ? "Ingredientes elegidos"
                             : selectedProduct.id === "tostada"
                               ? "Ingrediente elegido"
-                            : "Servicio incluido"}
+                              : "Servicio incluido"}
                         </p>
                         <p className="mt-2 text-lg font-bold text-white">
                           {selectedProduct.id === "contenedor"
                             ? `${activeSummary.extras}/4`
                             : selectedProduct.id === "tostada"
                               ? `${activeSummary.extras}/1`
-                            : "Completo"}
+                              : "Completo"}
                         </p>
                       </div>
                       <div className="rounded-[1.4rem] bg-white/5 p-4">
@@ -160,9 +180,13 @@ function App() {
                 <CustomizerPanel
                   selectedProduct={selectedProduct}
                   selectedExtras={selectedExtras}
+                  removedIngredients={removedIngredients}
+                  selectedAddOns={selectedAddOns}
                   quantity={quantity}
                   onQuantityChange={setQuantity}
                   onToggleExtra={toggleExtra}
+                  onToggleRemovedIngredient={toggleRemovedIngredient}
+                  onAddOnQuantityChange={handleAddOnQuantityChange}
                   onAddToCart={handleAddToCart}
                 />
               </div>

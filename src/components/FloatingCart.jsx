@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { businessInfo } from "../data/menu";
 import { useCartStore } from "../store/useCartStore";
@@ -12,6 +13,13 @@ export function FloatingCart() {
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const total = useCartStore((state) => state.getTotal());
+  const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    if (items.length > 0) {
+      setIsOpen(true);
+    }
+  }, [items.length]);
 
   const openWhatsApp = () => {
     if (!items.length) return;
@@ -25,14 +33,16 @@ export function FloatingCart() {
       "_blank",
       "noopener,noreferrer",
     );
+    setIsOpen(false);
   };
 
   return (
     <div className="pointer-events-none fixed bottom-4 left-0 right-0 z-50 px-4 sm:bottom-6">
       <div className="mx-auto max-w-md">
-        <AnimatePresence>
-          {items.length > 0 && (
+        <AnimatePresence mode="wait">
+          {items.length > 0 && isOpen ? (
             <motion.div
+              key="cart-open"
               initial={{ opacity: 0, y: 80 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 80 }}
@@ -47,13 +57,22 @@ export function FloatingCart() {
                     {itemCount} producto{itemCount > 1 ? "s" : ""}
                   </p>
                 </div>
-                <button
-                  type="button"
-                  onClick={clearCart}
-                  className="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-50/70 transition hover:border-rose-400/50 hover:text-white"
-                >
-                  Vaciar
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsOpen(false)}
+                    className="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-50/70 transition hover:border-amber-300/50 hover:text-white"
+                  >
+                    Ocultar
+                  </button>
+                  <button
+                    type="button"
+                    onClick={clearCart}
+                    className="rounded-full border border-white/10 px-3 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-orange-50/70 transition hover:border-rose-400/50 hover:text-white"
+                  >
+                    Vaciar
+                  </button>
+                </div>
               </div>
 
               <div className="max-h-56 space-y-3 overflow-y-auto px-5 py-4">
@@ -69,12 +88,35 @@ export function FloatingCart() {
                           Cantidad: {item.quantity}
                         </p>
                         <p className="mt-1 text-sm text-orange-50/70">
-                          {item.extras.length
-                            ? `Ingredientes: ${item.extras
-                                .map((extra) => extra.name)
-                                .join(", ")}`
-                            : "Sin seleccion adicional"}
+                          {item.tostadaOrders?.length > 0
+                            ? item.tostadaOrders
+                                .map((order) => {
+                                  const removed =
+                                    order.removedIngredients.length > 0
+                                      ? ` | Sin: ${order.removedIngredients.join(", ")}`
+                                      : "";
+                                  return `${order.ingredientName}${removed}`;
+                                })
+                                .join(" / ")
+                            : item.extras.length
+                              ? `Ingredientes: ${item.extras
+                                  .map((extra) => extra.name)
+                                  .join(", ")}`
+                              : "Sin seleccion adicional"}
                         </p>
+                        {item.removedIngredients?.length > 0 && (
+                          <p className="mt-1 text-sm text-orange-50/70">
+                            Sin: {item.removedIngredients.join(", ")}
+                          </p>
+                        )}
+                        {item.addOns?.length > 0 && (
+                          <p className="mt-1 text-sm text-orange-50/70">
+                            Extras:{" "}
+                            {item.addOns
+                              .map((addOn) => `${addOn.name} x${addOn.quantity}`)
+                              .join(", ")}
+                          </p>
+                        )}
                       </div>
                       <div className="text-right">
                         <p className="font-black text-amber-300">
@@ -128,7 +170,29 @@ export function FloatingCart() {
                 </button>
               </div>
             </motion.div>
-          )}
+          ) : items.length > 0 ? (
+            <motion.button
+              key="cart-closed"
+              initial={{ opacity: 0, y: 80 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 80 }}
+              type="button"
+              onClick={() => setIsOpen(true)}
+              className="pointer-events-auto ml-auto flex items-center gap-3 rounded-full border border-white/10 bg-stone-950/95 px-5 py-4 text-left shadow-glow backdrop-blur"
+            >
+              <span className="flex h-11 w-11 items-center justify-center rounded-full bg-brand-gradient text-lg font-black text-white">
+                {itemCount}
+              </span>
+              <span>
+                <span className="block text-xs uppercase tracking-[0.2em] text-amber-300">
+                  Ver pedido
+                </span>
+                <span className="block text-sm font-bold text-white">
+                  {formatCurrency(total)}
+                </span>
+              </span>
+            </motion.button>
+          ) : null}
         </AnimatePresence>
       </div>
     </div>

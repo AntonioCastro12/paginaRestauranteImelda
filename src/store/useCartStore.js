@@ -5,6 +5,16 @@ const buildFingerprint = (config) =>
   JSON.stringify({
     productId: config.product.id,
     extras: config.extras.map((item) => item.id).sort(),
+    tostadaOrders: (config.tostadaOrders ?? [])
+      .map(
+        (item) =>
+          `${item.ingredientId}:${[...(item.removedIngredients ?? [])].sort().join("|")}`,
+      )
+      .sort(),
+    removedIngredients: [...(config.removedIngredients ?? [])].sort(),
+    addOns: (config.addOns ?? [])
+      .map((item) => `${item.id}:${item.quantity}`)
+      .sort(),
     total: config.total,
   });
 
@@ -15,6 +25,9 @@ const buildCartItem = (config) => ({
   name: config.product.name,
   basePrice: config.product.price,
   extras: config.extras,
+  tostadaOrders: config.tostadaOrders ?? [],
+  removedIngredients: config.removedIngredients ?? [],
+  addOns: config.addOns ?? [],
   extrasTotal: config.extras.reduce((sum, item) => sum + item.price, 0),
   total: config.total,
   quantity: config.quantity ?? 1,

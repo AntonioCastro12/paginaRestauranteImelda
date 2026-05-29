@@ -90,6 +90,18 @@ export const extras = [
   },
 ];
 
+export const removableIngredients = [
+  { id: "aguacate", name: "Aguacate" },
+  { id: "repollo", name: "Repollo" },
+  { id: "frijoles", name: "Frijoles" },
+  { id: "pico-gallo", name: "Pico de gallo" },
+];
+
+export const addOns = [
+  { id: "tostadas-extra", name: "Tostadas extra", price: 10 },
+  { id: "salsa-extra", name: "Salsa extra", price: 10 },
+];
+
 export const testimonials = [
   {
     id: 1,
@@ -109,7 +121,7 @@ export const testimonials = [
 ];
 
 export const businessInfo = {
-  whatsappNumber: "4622105704",
+  whatsappNumber: "5214623105704",
   hours: "Lunes a domingo | 9:00 AM a 7:00 PM",
   location: "Mercado local, Ciudad de Mexico",
   shippingNote: "El costo de envio se cobra por separado.",
