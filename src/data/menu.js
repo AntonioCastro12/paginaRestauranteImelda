@@ -109,7 +109,7 @@ export const testimonials = [
 ];
 
 export const businessInfo = {
-  whatsappNumber: "5215512345678",
+  whatsappNumber: "4622105704",
   hours: "Lunes a domingo | 9:00 AM a 7:00 PM",
   location: "Mercado local, Ciudad de Mexico",
   shippingNote: "El costo de envio se cobra por separado.",

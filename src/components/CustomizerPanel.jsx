@@ -16,6 +16,8 @@ function getProductMode(productId) {
 export function CustomizerPanel({
   selectedProduct,
   selectedExtras,
+  quantity,
+  onQuantityChange,
   onToggleExtra,
   onAddToCart,
 }) {
@@ -152,6 +154,36 @@ export function CustomizerPanel({
         </div>
       </div>
 
+      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-semibold text-white">Cantidad</p>
+            <p className="mt-1 text-sm text-orange-50/65">
+              Sube aqui si te piden varias unidades.
+            </p>
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl bg-white/5 p-2">
+            <button
+              type="button"
+              onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white transition hover:border-amber-300/50"
+            >
+              -
+            </button>
+            <span className="min-w-10 text-center text-lg font-black text-amber-300">
+              {quantity}
+            </span>
+            <button
+              type="button"
+              onClick={() => onQuantityChange(quantity + 1)}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white transition hover:border-amber-300/50"
+            >
+              +
+            </button>
+          </div>
+        </div>
+      </div>
+
       {isTostada && (
         <div className="mt-5 rounded-[1.5rem] border border-dashed border-amber-300/30 bg-amber-300/10 p-4 text-sm text-orange-50/85">
           Cada tostada cuesta {formatCurrency(TOSTADA_PRICE)}.
@@ -186,6 +218,7 @@ export function CustomizerPanel({
             product: selectedProduct,
             extras: selectedExtras,
             total,
+            quantity,
           })
         }
         className="mt-6 w-full rounded-2xl bg-brand-gradient px-5 py-4 text-base font-black text-white transition duration-300 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"

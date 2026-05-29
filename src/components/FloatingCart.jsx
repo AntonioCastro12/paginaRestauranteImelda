@@ -6,6 +6,9 @@ import { buildWhatsAppUrl } from "../utils/whatsapp";
 
 export function FloatingCart() {
   const items = useCartStore((state) => state.items);
+  const itemCount = useCartStore((state) => state.getItemCount());
+  const increaseQuantity = useCartStore((state) => state.increaseQuantity);
+  const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
   const removeItem = useCartStore((state) => state.removeItem);
   const clearCart = useCartStore((state) => state.clearCart);
   const total = useCartStore((state) => state.getTotal());
@@ -41,7 +44,7 @@ export function FloatingCart() {
                     Tu pedido
                   </p>
                   <p className="mt-1 text-lg font-black text-white">
-                    {items.length} producto{items.length > 1 ? "s" : ""}
+                    {itemCount} producto{itemCount > 1 ? "s" : ""}
                   </p>
                 </div>
                 <button
@@ -62,6 +65,9 @@ export function FloatingCart() {
                     <div className="flex items-start justify-between gap-4">
                       <div>
                         <p className="font-semibold text-white">{item.name}</p>
+                        <p className="mt-1 text-sm font-semibold text-amber-300">
+                          Cantidad: {item.quantity}
+                        </p>
                         <p className="mt-1 text-sm text-orange-50/70">
                           {item.extras.length
                             ? `Ingredientes: ${item.extras
@@ -72,8 +78,24 @@ export function FloatingCart() {
                       </div>
                       <div className="text-right">
                         <p className="font-black text-amber-300">
-                          {formatCurrency(item.total)}
+                          {formatCurrency(item.total * item.quantity)}
                         </p>
+                        <div className="mt-2 flex items-center justify-end gap-2">
+                          <button
+                            type="button"
+                            onClick={() => decreaseQuantity(item.id)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-sm font-black text-white transition hover:border-amber-300/50"
+                          >
+                            -
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => increaseQuantity(item.id)}
+                            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 text-sm font-black text-white transition hover:border-amber-300/50"
+                          >
+                            +
+                          </button>
+                        </div>
                         <button
                           type="button"
                           onClick={() => removeItem(item.id)}

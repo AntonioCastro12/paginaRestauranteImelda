@@ -8,7 +8,7 @@ export const buildWhatsAppUrl = ({ number, items, total }) => {
           ? `\nIngredientes: ${item.extras.map((extra) => extra.name).join(", ")}`
           : "";
 
-      return `* ${item.name}${extras}\nTotal: $${item.total}`;
+      return `* ${item.name}\nCantidad: ${item.quantity}${extras}\nTotal: $${item.total * item.quantity}`;
     }),
     "",
     `Total general: $${total}`,

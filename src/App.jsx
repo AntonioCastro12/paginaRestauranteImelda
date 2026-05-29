@@ -18,6 +18,7 @@ function App() {
   const [showLoader, setShowLoader] = useState(true);
   const [selectedProduct, setSelectedProduct] = useState(menuItems[0]);
   const [selectedExtras, setSelectedExtras] = useState([]);
+  const [quantity, setQuantity] = useState(1);
   const [feedback, setFeedback] = useState("");
 
   useEffect(() => {
@@ -66,11 +67,16 @@ function App() {
   const handleSelectProduct = (product) => {
     setSelectedProduct(product);
     setSelectedExtras([]);
+    setQuantity(1);
   };
 
   const handleAddToCart = (config) => {
     addItem(config);
-    setFeedback("Producto agregado al carrito.");
+    setSelectedExtras([]);
+    setQuantity(1);
+    setFeedback(
+      `${config.quantity} ${config.quantity === 1 ? "unidad agregada" : "unidades agregadas"} al carrito.`,
+    );
   };
 
   return (
@@ -110,7 +116,7 @@ function App() {
                     <p className="text-xs uppercase tracking-[0.3em] text-amber-300">
                       Resumen rapido
                     </p>
-                    <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                    <div className="mt-4 grid gap-4 sm:grid-cols-4">
                       <div className="rounded-[1.4rem] bg-white/5 p-4">
                         <p className="text-sm text-orange-100/70">Base activa</p>
                         <p className="mt-2 text-lg font-bold text-white">
@@ -141,6 +147,12 @@ function App() {
                             : "Completo"}
                         </p>
                       </div>
+                      <div className="rounded-[1.4rem] bg-white/5 p-4">
+                        <p className="text-sm text-orange-100/70">Cantidad</p>
+                        <p className="mt-2 text-lg font-bold text-white">
+                          {quantity}
+                        </p>
+                      </div>
                     </div>
                   </motion.div>
                 </div>
@@ -148,6 +160,8 @@ function App() {
                 <CustomizerPanel
                   selectedProduct={selectedProduct}
                   selectedExtras={selectedExtras}
+                  quantity={quantity}
+                  onQuantityChange={setQuantity}
                   onToggleExtra={toggleExtra}
                   onAddToCart={handleAddToCart}
                 />
