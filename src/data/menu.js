@@ -132,7 +132,7 @@ export const testimonials = [
 ];
 
 export const businessInfo = {
-  whatsappNumber: "5214623105704",
+  whatsappNumber: "5214623361636",
   hours: "Lunes a domingo | 2:00 PM a 7:00 PM",
   location: "Rey alfonso XII #367, Fracc. Los Resyes, Irapuato, Gto.",
   shippingNote: "El costo de envio se cobra por separado.",
