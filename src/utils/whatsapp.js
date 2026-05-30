@@ -34,7 +34,7 @@ export const buildWhatsAppUrl = ({ number, items, total }) => {
     }),
     "",
     `Total general: $${total}`,
-    "Envio: se cobra por separado",
+    "Envio: se cobra por separado, favor de poner tu direccion completa, para cotizar el envio.",
   ];
 
   return `https://api.whatsapp.com/send?phone=${number}&text=${encodeURIComponent(lines.join("\n"))}`;
