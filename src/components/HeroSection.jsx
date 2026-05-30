@@ -76,7 +76,7 @@ export function HeroSection() {
 
         <div className="relative min-h-[360px] md:min-h-full">
           <img
-            src="../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.34 PM (1).jpg"
+            src="../../public/image/ordenEntera.jpg"
             alt="Patitas de puerco servidas con estilo casero"
             className="h-full w-full object-cover"
             fetchPriority="high"

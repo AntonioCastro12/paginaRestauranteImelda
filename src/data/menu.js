@@ -5,7 +5,7 @@ export const menuItems = [
     price: 100,
     type: "fixed",
     image:
-      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.34 PM (1).jpg",
+      "../../public/image/ordenEntera.jpg",
     description:
       "Platillo completo de 8 piezas de patita con porcion de repollo, zanahoria, pico de gallo, aguacate, limon y cueritos. Tostadas y salsa aparte.",
     badge: "Favorita",
@@ -16,7 +16,7 @@ export const menuItems = [
     price: 60,
     type: "fixed",
     image:
-      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.35 PM (1).jpeg",
+      "../../public/image/mediaOrden.jpeg",
     description:
       "Platillo de media porcion con 4 piezas de patita, repollo, zanahoria, pico de gallo, aguacate, limon y cueritos. Tostadas y salsa aparte.",
     badge: "Para antojo",
@@ -27,7 +27,7 @@ export const menuItems = [
     price: 30,
     type: "single-select",
     image:
-      "../../dist/assets/imagenes/WhatsApp Image 2022-10-21 at 5.29.34 PM (4).jpeg",
+      "../../public/image/tostadaSencilla.jpeg",
     description:
       "Elige 1 ingrediente: cueritos, oreja, pata picada, queso de puerco, carne tartara o ceviche. Cada tostada cuesta $30.",
     badge: "Desde $30",
@@ -38,7 +38,7 @@ export const menuItems = [
     price: 60,
     type: "double-select",
     image:
-      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.34 PM.jpeg",
+      "../../public/image/tostadaDoble.jpeg",
     description:
       "Elige 2 ingredientes para una tostada especial. Esta version cuesta $60.",
     badge: "2 ingredientes",
@@ -49,7 +49,7 @@ export const menuItems = [
     price: 0,
     type: "multi-select",
     image:
-      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.35 PM (3).jpeg",
+      "../../public/image/contenedor.jpeg",
     description:
       "Solo los contenedores se pueden combinar. Lleva 3 ingredientes por $70 o 4 ingredientes por $100. El envio se cobra por separado.",
     badge: "A tu gusto",
