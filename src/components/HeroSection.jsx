@@ -76,7 +76,7 @@ export function HeroSection() {
 
         <div className="relative min-h-[360px] md:min-h-full">
           <img
-            src="../../public/image/ordenEntera.jpg"
+            src="/image/ordenEntera.jpg"
             alt="Patitas de puerco servidas con estilo casero"
             className="h-full w-full object-cover"
             fetchPriority="high"
