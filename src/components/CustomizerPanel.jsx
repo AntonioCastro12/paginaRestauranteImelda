@@ -9,11 +9,13 @@ import {
 import { formatCurrency } from "../utils/format";
 
 const TOSTADA_PRICE = 30;
+const TOSTADA_DOUBLE_PRICE = 60;
 const CONTAINER_THREE_PRICE = 70;
 const CONTAINER_FOUR_PRICE = 100;
 
 function getProductMode(productId) {
   if (productId === "tostada") return "single";
+  if (productId === "tostada-doble") return "double";
   if (productId === "contenedor") return "multi";
   return "fixed";
 }
@@ -32,8 +34,9 @@ export function CustomizerPanel({
 }) {
   const mode = getProductMode(selectedProduct.id);
   const isTostada = mode === "single";
+  const isDoubleTostada = mode === "double";
   const isContainer = mode === "multi";
-  const maxSelections = isTostada ? 1 : isContainer ? 4 : 0;
+  const maxSelections = isTostada ? 1 : isDoubleTostada ? 2 : isContainer ? 4 : 0;
 
   const addOnsTotal = useMemo(
     () =>
@@ -49,6 +52,10 @@ export function CustomizerPanel({
       return selectedExtras.length === 1 ? TOSTADA_PRICE : 0;
     }
 
+    if (isDoubleTostada) {
+      return selectedExtras.length === 2 ? TOSTADA_DOUBLE_PRICE : 0;
+    }
+
     if (isContainer) {
       if (selectedExtras.length === 3) return CONTAINER_THREE_PRICE;
       if (selectedExtras.length === 4) return CONTAINER_FOUR_PRICE;
@@ -56,54 +63,66 @@ export function CustomizerPanel({
     }
 
     return selectedProduct.price;
-  }, [isContainer, isTostada, selectedExtras.length, selectedProduct.price]);
+  }, [
+    isContainer,
+    isDoubleTostada,
+    isTostada,
+    selectedExtras.length,
+    selectedProduct.price,
+  ]);
 
   const total = baseTotal + addOnsTotal;
 
   const canAdd = isTostada
     ? selectedExtras.length === 1
-    : isContainer
-      ? selectedExtras.length === 3 || selectedExtras.length === 4
-      : true;
+    : isDoubleTostada
+      ? selectedExtras.length === 2
+      : isContainer
+        ? selectedExtras.length === 3 || selectedExtras.length === 4
+        : true;
 
   return (
     <motion.aside
       layout
-      className="sticky top-4 rounded-[2rem] border border-white/10 bg-stone-900/80 p-5 shadow-glow backdrop-blur"
+      className="sticky top-3 rounded-[1.75rem] border border-white/10 bg-stone-900/85 p-4 shadow-glow backdrop-blur sm:top-4 sm:rounded-[2rem] sm:p-5"
     >
-      <div className="flex items-center justify-between gap-4">
+      <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs uppercase tracking-[0.3em] text-amber-300">
             Personalizador
           </p>
-          <h3 className="mt-2 font-display text-2xl font-black text-white">
+          <h3 className="mt-2 font-display text-xl font-black text-white sm:text-2xl">
             {selectedProduct.name}
           </h3>
         </div>
         <div className="rounded-2xl bg-white/10 px-4 py-3 text-right">
-          <p className="text-xs uppercase tracking-[0.2em] text-orange-100/70">
+          <p className="text-[11px] uppercase tracking-[0.2em] text-orange-100/70">
             Total
           </p>
-          <p className="text-2xl font-black text-amber-300">
+          <p className="text-xl font-black text-amber-300 sm:text-2xl">
             {formatCurrency(total)}
           </p>
         </div>
       </div>
 
-      <div className="mt-6 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
         <p className="text-sm font-semibold text-white">
           {isTostada
-            ? "Elige el ingrediente de tu tostada"
-            : isContainer
-              ? "Selecciona 3 o 4 ingredientes para tu contenedor"
-              : "Este platillo ya incluye su servicio completo"}
+            ? "Elige 1 ingrediente para tu tostada"
+            : isDoubleTostada
+              ? "Elige 2 ingredientes para tu tostada especial"
+              : isContainer
+                ? "Selecciona 3 o 4 ingredientes para tu contenedor"
+                : "Este platillo ya incluye su servicio completo"}
         </p>
-        <p className="mt-1 text-sm text-orange-50/70">
+        <p className="mt-1 text-sm leading-6 text-orange-50/70">
           {isTostada
-            ? `Cada tostada preparada cuesta ${formatCurrency(TOSTADA_PRICE)}. Elige una y agrega las que necesites al carrito.`
-            : isContainer
-              ? `Solo los contenedores se combinan: 3 ingredientes ${formatCurrency(CONTAINER_THREE_PRICE)} | 4 ingredientes ${formatCurrency(CONTAINER_FOUR_PRICE)}.`
-              : "Si quieren todo, solo agrega al carrito. Si no, puedes quitar ingredientes o sumar extras."}
+            ? `Cada tostada preparada cuesta ${formatCurrency(TOSTADA_PRICE)}.`
+            : isDoubleTostada
+              ? `La tostada especial cuesta ${formatCurrency(TOSTADA_DOUBLE_PRICE)} con 2 ingredientes.`
+              : isContainer
+                ? `Solo los contenedores se combinan: 3 ingredientes ${formatCurrency(CONTAINER_THREE_PRICE)} | 4 ingredientes ${formatCurrency(CONTAINER_FOUR_PRICE)}.`
+                : "Si quieren todo, solo agrega al carrito. Si no, puedes quitar ingredientes o sumar extras."}
         </p>
 
         {mode !== "fixed" ? (
@@ -121,25 +140,29 @@ export function CustomizerPanel({
                       : "border-white/10 bg-white/5"
                   } ${disabled ? "opacity-45" : "hover:border-orange-300/60"}`}
                 >
-                  <div className="flex items-center justify-between gap-4">
+                  <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <input
                         type={isTostada ? "radio" : "checkbox"}
                         name={isTostada ? "tostada-ingrediente" : extra.id}
-                        className="h-5 w-5 rounded border-white/20 accent-orange-500"
+                        className="mt-1 h-5 w-5 rounded border-white/20 accent-orange-500"
                         checked={checked}
                         disabled={disabled}
                         onChange={() => onToggleExtra(extra)}
                       />
-                      <span className="font-medium text-white">{extra.name}</span>
+                      <div>
+                        <span className="block font-medium text-white">
+                          {extra.name}
+                        </span>
+                        <span className="mt-1 block text-sm leading-5 text-orange-50/65">
+                          {extra.description}
+                        </span>
+                      </div>
                     </div>
-                    <span className="text-sm font-bold text-amber-300">
+                    <span className="shrink-0 rounded-full bg-orange-100 px-3 py-1 text-sm font-black text-orange-700">
                       {formatCurrency(extra.price)}
                     </span>
                   </div>
-                  <p className="mt-3 text-sm leading-6 text-orange-50/65">
-                    {extra.description}
-                  </p>
                 </label>
               );
             })}
@@ -153,19 +176,19 @@ export function CustomizerPanel({
         )}
       </div>
 
-      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+      <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
         <p className="text-sm font-semibold text-white">Quitar ingredientes</p>
         <p className="mt-1 text-sm text-orange-50/65">
-          Si no quieren alguno, marcala aqui. Si quieren todo, solo agrega.
+          Si no quieren alguno, marcala aqui. Si quieren todo, no toques nada.
         </p>
-        <div className="mt-4 grid gap-3">
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
           {removableIngredients.map((ingredient) => {
             const checked = removedIngredients.includes(ingredient.name);
 
             return (
               <label
                 key={ingredient.id}
-                className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-4 transition ${
+                className={`flex cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 transition ${
                   checked
                     ? "border-amber-300 bg-amber-300/10"
                     : "border-white/10 bg-white/5 hover:border-orange-300/60"
@@ -184,7 +207,7 @@ export function CustomizerPanel({
         </div>
       </div>
 
-      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+      <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
         <p className="text-sm font-semibold text-white">Extras adicionales</p>
         <p className="mt-1 text-sm text-orange-50/65">
           Tostadas extra y salsa extra cuestan {formatCurrency(10)} cada una.
@@ -193,7 +216,7 @@ export function CustomizerPanel({
           {addOns.map((item) => (
             <div
               key={item.id}
-              className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-4"
+              className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3"
             >
               <div>
                 <p className="font-medium text-white">{item.name}</p>
@@ -201,7 +224,7 @@ export function CustomizerPanel({
                   {formatCurrency(item.price)} c/u
                 </p>
               </div>
-              <div className="flex items-center gap-3 rounded-2xl bg-stone-950/60 p-2">
+              <div className="flex items-center gap-2 rounded-2xl bg-stone-950/60 p-2">
                 <button
                   type="button"
                   onClick={() =>
@@ -232,7 +255,7 @@ export function CustomizerPanel({
         </div>
       </div>
 
-      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+      <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
         <p className="text-sm font-semibold text-white">Seleccion actual</p>
         <div className="mt-3 flex flex-wrap gap-2">
           {mode !== "fixed" && selectedExtras.length > 0 ? (
@@ -268,19 +291,19 @@ export function CustomizerPanel({
         )}
       </div>
 
-      <div className="mt-5 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
-        <div className="flex items-center justify-between gap-4">
+      <div className="mt-4 rounded-[1.5rem] border border-white/10 bg-white/5 p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold text-white">Cantidad</p>
             <p className="mt-1 text-sm text-orange-50/65">
               Sube aqui si te piden varias unidades.
             </p>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl bg-white/5 p-2">
+          <div className="flex items-center justify-between gap-3 rounded-2xl bg-white/5 p-2 sm:justify-start">
             <button
               type="button"
               onClick={() => onQuantityChange(Math.max(1, quantity - 1))}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white transition hover:border-amber-300/50"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white transition hover:border-amber-300/50"
             >
               -
             </button>
@@ -290,7 +313,7 @@ export function CustomizerPanel({
             <button
               type="button"
               onClick={() => onQuantityChange(quantity + 1)}
-              className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white transition hover:border-amber-300/50"
+              className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 text-lg font-black text-white transition hover:border-amber-300/50"
             >
               +
             </button>
@@ -298,8 +321,8 @@ export function CustomizerPanel({
         </div>
       </div>
 
-      {isTostada && (
-        <div className="mt-5 rounded-[1.5rem] border border-dashed border-amber-300/30 bg-amber-300/10 p-4 text-sm text-orange-50/85">
+      {(isTostada || isDoubleTostada) && (
+        <div className="mt-4 rounded-[1.5rem] border border-dashed border-amber-300/30 bg-amber-300/10 p-4 text-sm text-orange-50/85">
           Elige tu tostada, ajusta la cantidad y agregala al carrito.
           <p className="mt-2 font-semibold text-amber-200">
             {businessInfo.shippingNote}
@@ -308,7 +331,7 @@ export function CustomizerPanel({
       )}
 
       {isContainer && (
-        <div className="mt-5 rounded-[1.5rem] border border-dashed border-amber-300/30 bg-amber-300/10 p-4 text-sm text-orange-50/85">
+        <div className="mt-4 rounded-[1.5rem] border border-dashed border-amber-300/30 bg-amber-300/10 p-4 text-sm text-orange-50/85">
           Elige 3 ingredientes para pagar {formatCurrency(CONTAINER_THREE_PRICE)} o
           4 ingredientes para pagar {formatCurrency(CONTAINER_FOUR_PRICE)}.
           {!canAdd && (
@@ -344,13 +367,15 @@ export function CustomizerPanel({
             quantity,
           })
         }
-        className="mt-6 w-full rounded-2xl bg-brand-gradient px-5 py-4 text-base font-black text-white transition duration-300 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
+        className="mt-5 w-full rounded-2xl bg-brand-gradient px-5 py-4 text-base font-black text-white transition duration-300 hover:scale-[1.01] disabled:cursor-not-allowed disabled:opacity-50"
       >
         {isContainer
           ? "Agregar contenedor al carrito"
-          : isTostada
-            ? "Agregar tostada al carrito"
-            : "Agregar al carrito"}
+          : isDoubleTostada
+            ? "Agregar tostada especial al carrito"
+            : isTostada
+              ? "Agregar tostada al carrito"
+              : "Agregar al carrito"}
       </button>
     </motion.aside>
   );

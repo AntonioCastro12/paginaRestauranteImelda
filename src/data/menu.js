@@ -33,6 +33,17 @@ export const menuItems = [
     badge: "Desde $30",
   },
   {
+    id: "tostada-doble",
+    name: "Tostada especial",
+    price: 60,
+    type: "double-select",
+    image:
+      "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=1200&q=80",
+    description:
+      "Elige 2 ingredientes para una tostada especial. Esta version cuesta $60.",
+    badge: "2 ingredientes",
+  },
+  {
     id: "contenedor",
     name: "Contenedor combinable",
     price: 0,

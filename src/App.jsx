@@ -54,6 +54,7 @@ function App() {
     setSelectedExtras((current) => {
       const exists = current.some((item) => item.id === extra.id);
       const isTostada = selectedProduct.id === "tostada";
+      const isDoubleTostada = selectedProduct.id === "tostada-doble";
       const isContainer = selectedProduct.id === "contenedor";
 
       if (exists) {
@@ -62,6 +63,11 @@ function App() {
 
       if (isTostada) {
         return [extra];
+      }
+
+      if (isDoubleTostada && current.length >= 2) {
+        setFeedback("La tostada especial solo lleva 2 ingredientes.");
+        return current;
       }
 
       if (isContainer && current.length >= 4) {
@@ -108,12 +114,12 @@ function App() {
         <div className="relative z-10">
           <HeroSection />
 
-          <section id="menu" className="px-4 py-12 sm:px-6">
+          <section id="menu" className="px-4 py-10 sm:px-6 sm:py-12">
             <div className="mx-auto max-w-6xl">
               <SectionTitle
                 eyebrow="Menu interactivo"
                 title="Elige tu platillo o arma tu contenedor combinable"
-                description="Las tostadas ahora se eligen rapido: eliges el ingrediente, ajustas cantidad y agregas al carrito. Todos los productos pueden marcar ingredientes que no quieren y sumar tostadas o salsa extra por $10."
+                description="Ya incluye tostada preparada de $30 y tostada especial de $60 con 2 ingredientes. Tambien mejoramos la experiencia para celulares con controles mas compactos y faciles de tocar."
               />
 
               <div className="mt-8 grid gap-6 lg:grid-cols-[1fr,380px]">
@@ -131,21 +137,21 @@ function App() {
 
                   <motion.div
                     layout
-                    className="rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur"
+                    className="rounded-[2rem] border border-white/10 bg-white/5 p-4 backdrop-blur sm:p-5"
                   >
                     <p className="text-xs uppercase tracking-[0.3em] text-amber-300">
                       Resumen rapido
                     </p>
-                    <div className="mt-4 grid gap-4 sm:grid-cols-4">
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                       <div className="rounded-[1.4rem] bg-white/5 p-4">
                         <p className="text-sm text-orange-100/70">Base activa</p>
-                        <p className="mt-2 text-lg font-bold text-white">
+                        <p className="mt-2 text-base font-bold text-white sm:text-lg">
                           {selectedProduct.name}
                         </p>
                       </div>
                       <div className="rounded-[1.4rem] bg-white/5 p-4">
                         <p className="text-sm text-orange-100/70">Precio base</p>
-                        <p className="mt-2 text-lg font-bold text-white">
+                        <p className="mt-2 text-base font-bold text-white sm:text-lg">
                           {selectedProduct.id === "contenedor"
                             ? "$70 / $100"
                             : `$${activeSummary.base}`}
@@ -155,21 +161,25 @@ function App() {
                         <p className="text-sm text-orange-100/70">
                           {selectedProduct.id === "contenedor"
                             ? "Ingredientes elegidos"
-                            : selectedProduct.id === "tostada"
-                              ? "Ingrediente elegido"
-                              : "Servicio incluido"}
+                            : selectedProduct.id === "tostada-doble"
+                              ? "Ingredientes elegidos"
+                              : selectedProduct.id === "tostada"
+                                ? "Ingrediente elegido"
+                                : "Servicio incluido"}
                         </p>
-                        <p className="mt-2 text-lg font-bold text-white">
+                        <p className="mt-2 text-base font-bold text-white sm:text-lg">
                           {selectedProduct.id === "contenedor"
                             ? `${activeSummary.extras}/4`
-                            : selectedProduct.id === "tostada"
-                              ? `${activeSummary.extras}/1`
-                              : "Completo"}
+                            : selectedProduct.id === "tostada-doble"
+                              ? `${activeSummary.extras}/2`
+                              : selectedProduct.id === "tostada"
+                                ? `${activeSummary.extras}/1`
+                                : "Completo"}
                         </p>
                       </div>
                       <div className="rounded-[1.4rem] bg-white/5 p-4">
                         <p className="text-sm text-orange-100/70">Cantidad</p>
-                        <p className="mt-2 text-lg font-bold text-white">
+                        <p className="mt-2 text-base font-bold text-white sm:text-lg">
                           {quantity}
                         </p>
                       </div>
@@ -206,7 +216,7 @@ function App() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 20 }}
-            className="fixed left-1/2 top-4 z-[60] -translate-x-1/2 rounded-full border border-white/10 bg-stone-900/90 px-5 py-3 text-sm font-semibold text-white shadow-card backdrop-blur"
+            className="fixed left-1/2 top-4 z-[60] w-[calc(100%-2rem)] max-w-sm -translate-x-1/2 rounded-2xl border border-white/10 bg-stone-900/90 px-5 py-3 text-center text-sm font-semibold text-white shadow-card backdrop-blur"
           >
             {feedback}
           </motion.div>
