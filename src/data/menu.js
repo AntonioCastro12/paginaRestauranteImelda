@@ -5,7 +5,7 @@ export const menuItems = [
     price: 100,
     type: "fixed",
     image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.34 PM (1).jpg",
     description:
       "Platillo completo de 8 piezas de patita con porcion de repollo, zanahoria, pico de gallo, aguacate, limon y cueritos. Tostadas y salsa aparte.",
     badge: "Favorita",
@@ -16,29 +16,29 @@ export const menuItems = [
     price: 60,
     type: "fixed",
     image:
-      "https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1200&q=80",
+      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.35 PM (1).jpeg",
     description:
       "Platillo de media porcion con 4 piezas de patita, repollo, zanahoria, pico de gallo, aguacate, limon y cueritos. Tostadas y salsa aparte.",
     badge: "Para antojo",
   },
   {
     id: "tostada",
-    name: "Tostada preparada",
+    name: "Tostada sencilla",
     price: 30,
     type: "single-select",
     image:
-      "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=1200&q=80",
+      "../../dist/assets/imagenes/WhatsApp Image 2022-10-21 at 5.29.34 PM (4).jpeg",
     description:
       "Elige 1 ingrediente: cueritos, oreja, pata picada, queso de puerco, carne tartara o ceviche. Cada tostada cuesta $30.",
     badge: "Desde $30",
   },
   {
     id: "tostada-doble",
-    name: "Tostada especial",
+    name: "Tostada doble",
     price: 60,
     type: "double-select",
     image:
-      "https://images.unsplash.com/photo-1613514785940-daed07799d9b?auto=format&fit=crop&w=1200&q=80",
+      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.34 PM.jpeg",
     description:
       "Elige 2 ingredientes para una tostada especial. Esta version cuesta $60.",
     badge: "2 ingredientes",
@@ -49,7 +49,7 @@ export const menuItems = [
     price: 0,
     type: "multi-select",
     image:
-      "https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?auto=format&fit=crop&w=1200&q=80",
+      "../../dist/assets/imagenes/WhatsApp Image 2024-10-07 at 5.49.35 PM (3).jpeg",
     description:
       "Solo los contenedores se pueden combinar. Lleva 3 ingredientes por $70 o 4 ingredientes por $100. El envio se cobra por separado.",
     badge: "A tu gusto",
@@ -133,7 +133,7 @@ export const testimonials = [
 
 export const businessInfo = {
   whatsappNumber: "5214623105704",
-  hours: "Lunes a domingo | 9:00 AM a 7:00 PM",
-  location: "Mercado local, Ciudad de Mexico",
+  hours: "Lunes a domingo | 2:00 PM a 7:00 PM",
+  location: "Rey alfonso XII #367, Fracc. Los Resyes, Irapuato, Gto.",
   shippingNote: "El costo de envio se cobra por separado.",
 };

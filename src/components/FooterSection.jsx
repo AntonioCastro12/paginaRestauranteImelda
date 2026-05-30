@@ -6,10 +6,10 @@ export function FooterSection() {
       <div className="mx-auto grid max-w-6xl gap-6 rounded-[2rem] border border-white/10 bg-white/5 p-6 backdrop-blur md:grid-cols-4">
         <div>
           <p className="text-xs uppercase tracking-[0.28em] text-amber-300">
-            Dona Imelda
+            Doña Imelda
           </p>
           <p className="mt-3 font-display text-2xl font-black text-white">
-            100% caseras - Dona Imelda
+            100% caseras - Doña Imelda
           </p>
         </div>
         <div>
